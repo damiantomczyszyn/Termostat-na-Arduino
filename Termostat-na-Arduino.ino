@@ -9,6 +9,16 @@
 DHT dht(DHT11_PIN, DHTTYPE);
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 float ustawionaTemperatura = 0.0;
+int buttonPinTempUp = 10;
+int buttonPinTempDown = 11;
+
+void pinInit()
+{
+  pinMode(WLACZNIKPODGRZEWANIA, OUTPUT);
+  pinMode(buttonPinTempUp, INPUT_PULLUP);
+  pinMode(buttonPinTempDown, INPUT_PULLUP);
+}
+
 void dhtInit()
 {
   dht.begin();
@@ -57,13 +67,12 @@ void printTemperatureAndHumidity()
 void setup() {
   lcdInit();
   dhtInit();
-  pinMode(WLACZNIKPODGRZEWANIA, OUTPUT);
+  pinInit();
+
 }
- 
- 
-void loop()
+void termostat()
 {
-  if(czyWlaczacPodgrzewanie())
+      if(czyWlaczacPodgrzewanie())
   {
     digitalWrite(WLACZNIKPODGRZEWANIA, stanOFF);
   }
@@ -71,4 +80,29 @@ void loop()
   {
     digitalWrite(WLACZNIKPODGRZEWANIA, stanON);
   }
+}
+void ustawianieTemperatury()
+{
+  if(digitalRead(buttonPinTempUp) == LOW)
+  {
+    ustawionaTemperatura--;
+    delay(100);
+    return ;
+  }
+    if(digitalRead(buttonPinTempUp) == LOW)
+  {
+    ustawionaTemperatura++;
+    delay(100);
+    return ;
+  }
+  
+
+} 
+
+void loop()
+{
+  termostat();
+  ustawianieTemperatury();
+  printTemperatureAndHumidity();
+  delay(1000);
 }
