@@ -3,6 +3,9 @@
 
 #define DHT11_PIN 8
 #define DHTTYPE DHT11
+#define WLACZNIKPODGRZEWANIA 9
+#define stanOFF 1
+#define stanON 0
 DHT dht(DHT11_PIN, DHTTYPE);
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 float ustawionaTemperatura = 0.0;
@@ -29,6 +32,14 @@ float getTemperature()
   return dht.readTemperature();
 }
 
+bool czyWlaczacPodgrzewanie()
+{
+  if(getTemperature() >= ustawionaTemperatura)
+    return false;
+  else
+    return true;
+}
+
 void printTemperatureAndHumidity()
 {
   lcd.clear();
@@ -46,12 +57,18 @@ void printTemperatureAndHumidity()
 void setup() {
   lcdInit();
   dhtInit();
+  pinMode(WLACZNIKPODGRZEWANIA, OUTPUT);
 }
  
-
  
 void loop()
 {
-
-  delay(250); //Opóźnienie
+  if(czyWlaczacPodgrzewanie())
+  {
+    digitalWrite(WLACZNIKPODGRZEWANIA, stanOFF);
+  }
+  else
+  {
+    digitalWrite(WLACZNIKPODGRZEWANIA, stanON);
+  }
 }
